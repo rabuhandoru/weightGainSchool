@@ -32,6 +32,10 @@
 		window.navigator.userLanguage ||
 		window.navigator.browserLanguage;
 
+		if (lang=="ja-JP"){
+			lang="ja"
+		}
+		
 		if (lang!="ja"){
 			lant = "en"
 		}
