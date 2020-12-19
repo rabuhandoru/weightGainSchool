@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<meta charset="UTF-8" />
+<head>
+	<title>肥満化高校シミュレーション</title>
+	<link rel="stylesheet" href="style.css">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes" />
+</head>
+	<body>
+		<div id="mainDiv">
+			入学する生徒数
+			<br>
+			<input type="number" id="studentNum" name="studentNum" value="15"></input>
+			<br>
+			入学する生徒の性別
+			<br>
+			<select id="sexSelect" name="select" size="3">
+			<option value="maleAndFemale">男女混合</option>
+			<option value="male">男子のみ</option>
+			<option value="female">女子のみ</option>
+			</select>
+			<br>
+			<input id="button" type="button" value="次の月へ" onclick="nextManthButtonClick();"/>
+			<br>
+
+			<input type="checkbox" id="groupWeight" >クラスの平均体重より軽い時に安心して太りやすくなる</input>
+			<br>
+			<input type="checkbox" id="schoolWeight" >全学年の平均体重より軽い時に安心して太りやすくなる</input>
+			<br>
+
+			<div id="time"></div>
+			<div id="year0div">
+			</div>
+			<div id="year1div">
+			</div>
+			<div id="year2div">
+			</div>
+			<script type="text/javascript" src="main.js"></script>
+		</div>
+
+		<div id="subDiv">
+		</div>
+
+	</body>
+</html>

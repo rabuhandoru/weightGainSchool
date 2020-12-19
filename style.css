@@ -1,0 +1,21 @@
+div {
+	text-align: center;
+	width: 100%;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@media screen and (min-width: 960px) {
+/*PC*/
+}
+
+@media (prefers-color-scheme: dark) {
+
+	body, input, select, textarea {
+		background-color: #222222;
+		color: #eeeeee;
+	}
+}
