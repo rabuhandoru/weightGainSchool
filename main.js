@@ -7,8 +7,8 @@
 	let maleFirstNames = ["歩夢","颯真","葵","剛","昇","大介","龍生","優斗","駿","輝","大翔","涼太","稔","新","翔平","哲也","浩之","健一","崇","樹","律","隆","拓海","悠真","聡","大輝","陸","優","蒼","博","颯太","達也","湊","空","優太","豊","大雅","学","健太郎","亮","匠","陽向","大和","和彦","大地","健太","拓哉","拓也","海斗","悠太","太一","健","修","颯","瑛太","陽大","大貴","勉","悠人","直人","海翔","浩一","大輔","茂","悠","陽太","博之","一輝","秀樹","浩","悠翔","智也","大樹","進","結翔","陸斗","翼","竜也","雄大","悠希","太陽","亮太","徹","蓮","翔太","朝陽","洋平","蒼空","陽翔","和也","竜","祐介","翔","浩二","康平","貴大","淳","直樹","誠","陽斗","悠斗","勝","雄太","英樹","明"]
 
 	let translateLanguage = {
-		"ja":{"weight":"体重","height":"身長","gainWeight":"増量値","name":"名前","grade":"学年","lastWeight":"先月の体重","date":"年/月","age":"年齢"},
-		"en":{"weight":"体重","height":"身長","gainWeight":"増量値","name":"名前","grade":"学年","lastWeight":"先月の体重","date":"年/月","age":"年齢"},
+		"ja":{"weight":"体重","height":"身長","gainWeight":"増量値","name":"名前","grade":"学年","lastWeight":"先月の体重","date":"年/月","age":"年齢","bmi":"BMI","sex":"性別","male":"男子","female":"女子"},
+		"en":{"weight":"体重","height":"身長","gainWeight":"増量値","name":"名前","grade":"学年","lastWeight":"先月の体重","date":"年/月","age":"年齢","bmi":"BMI","sex":"性別","male":"男子","female":"女子"},
 	}
 
 
@@ -43,6 +43,20 @@
 		return lang
 
 	}
+
+	function sortOfKey(l,key){
+		if (l[0][key]){
+			l.sort(function(a,b){
+				if(a[key] < b[key]) return -1;
+				if(a[key] > b[key]) return 1;
+				return 0;
+			});
+			return l
+		}else{
+			return l
+		}
+	}
+
 
 	function orgRound(value, base){
 		return Math.round(value * (10**base)) / (10**base)
@@ -111,81 +125,143 @@
 
 
 
-	function dictToTable(title,dicts,keys){
-		if (!Array.isArray(dicts)){
-			dicts = [dicts]
-		}
+//	function dictToTable(title,dicts,keys){
+	function dictToTable(){
 
-		if (!keys){
-			keys=object.keys(dicts)
+
+
+		if (arguments.length % 5 != 0){
+			print("引数の数が合いません")
+			return
 		}
 
 		let div = document.getElementById("subDiv");
 		removeAllChild("subDiv")
 
-		let p = document.createElement("p");
-		p.appendChild(document.createTextNode(title))
-		div.appendChild(p);
+
+//		for (const [i,arg] of enumerate(arguments)){
+		for (let i = 0; i < arguments.length; i+=5) {
+			let title=arguments[i]
+			let dicts=arguments[i+1]
+			let keys=arguments[i+2]
+			let sortKey=arguments[i+3]
+			let sortOrder=arguments[i+4]
 
 
-		let tbl = document.createElement("table");
-		let tblBody = document.createElement("tbody");
+			if (!Array.isArray(dicts)){
+				dicts = [dicts]
+			}
 
-		let row = document.createElement("tr");
+			if (!keys || keys.length==0){
+				keys=object.keys(dicts)
+			}
 
 
-		for (const key of keys){
-			let cell = document.createElement("td");
-			let cellText = document.createTextNode(translateLanguage[language][key]);
-			cell.appendChild(cellText);
-			row.appendChild(cell);
-		}
 
-		tblBody.appendChild(row);
 
-		for (const [num,dict] of enumerate(dicts)){
+			dicts = sortOfKey(dicts,sortKey)
+			if (sortOrder!=0){
+				dicts = reversed(dicts)
+			}
+
+			let p = document.createElement("p");
+			p.appendChild(document.createTextNode(title))
+			div.appendChild(p);
+
+//			if (len(dicts)!=1){
+//				let el = document.createElement("select");
+//				el.onclick =  sortChange;
+//				for ( const key of keys){
+//					addOption(el,translateLanguage[language][key],key)
+//				}
+//				div.appendChild(el);
+//			}
+
+			let tbl = document.createElement("table");
+			let tblBody = document.createElement("tbody");
+
 			let row = document.createElement("tr");
+
 
 			for (const key of keys){
 				let cell = document.createElement("td");
-				let txt = ""
-				if (key=="height"){
-					txt = orgRound(dict[key],1).toFixed(1)+"cm"
-				}else if (key=="weight"){
-					txt = orgRound(dict[key],1).toFixed(1)+"kg"
-				}else if ( (key=="gainWeight") || (key=="lastWeight") ){
-					txt = orgRound(dict[key],1).toFixed(1)+"kg"
-				}else if (key=="grade"){
-					txt = dict[key]+1
-				}else if (key=="date"){
-					txt = str(Math.floor(dict[key]/12))+"年"+str((dict[key]+3)%12+1)+"月"
-				}else if (key=="age"){
-					txt = str(Math.floor(dict[key]))+"歳"
-				}else{
-					if (typeOf(dict[key])=="number"){
-						txt = dict[key].toFixed(1)
-					}else{
-						txt = dict[key]
-					}
-				}
-				let cellText = document.createTextNode(txt);
-				cell.appendChild(cellText);
+				let cellText = document.createTextNode(translateLanguage[language][key]);
+
+				let aTag = document.createElement("a");
+				aTag.href = "javascript:void(0)";
+				aTag.onclick = sortChange
+				aTag.value = key
+				aTag.num = i
+				aTag.appendChild(cellText);
+				cell.appendChild(aTag);
 				row.appendChild(cell);
 			}
 
 			tblBody.appendChild(row);
-		}
 
-		tbl.appendChild(tblBody);
-		div.appendChild(tbl);
-		tbl.setAttribute("border", "1");
+			for (const [num,dict] of enumerate(dicts)){
+				let row = document.createElement("tr");
+
+				for (const key of keys){
+					let cell = document.createElement("td");
+					let txt = ""
+					if (key=="height"){
+						txt = orgRound(dict[key],1).toFixed(1)+"cm"
+					}else if (key=="weight"){
+						txt = orgRound(dict[key],1).toFixed(1)+"kg"
+					}else if ( (key=="gainWeight") || (key=="lastWeight") ){
+						txt = orgRound(dict[key],1).toFixed(1)+"kg"
+					}else if (key=="grade"){
+						txt = dict[key]+1
+					}else if (key=="date"){
+						txt = str(Math.floor(dict[key]/12))+"年"+str((dict[key]+3)%12+1)+"月"
+					}else if (key=="age"){
+						txt = str(Math.floor(dict[key]))+"歳"
+					}else if (key=="sex"){
+						txt = translateLanguage[language][dict[key]]
+					}else{
+						if (typeOf(dict[key])=="number"){
+							txt = dict[key].toFixed(1)
+						}else{
+							txt = dict[key]
+						}
+					}
+					let cellText = document.createTextNode(txt);
+					cell.appendChild(cellText);
+					row.appendChild(cell);
+				}
+
+				tblBody.appendChild(row);
+			}
+
+			tbl.appendChild(tblBody);
+			div.appendChild(tbl);
+			tbl.setAttribute("border", "1");
+		}
+	return arguments
 	}
 
-
+	function sortChange(){
+//		print(this.value)
+		if (this.value != lastSortKey){
+			sortOrder = 0
+		}
+		lastTableArguments[this.num+3] = this.value
+		lastTableArguments[this.num+4] = sortOrder
+		lastTableArguments = dictToTable(...lastTableArguments)
+		sortOrder=~sortOrder
+		lastSortKey = this.value
+	}
 
 	function changeSelect(){
 		if (students[this.value]){
-			dictToTable(students[this.value][0].name,students[this.value],["date","age","height","weight"])
+			lastTableArguments = dictToTable(
+				students[this.value][0].name,students[this.value],["date","age","height","weight"],"",0
+			)
+		}else{
+			lastTableArguments = dictToTable(
+				`${int(this.value)+1}年生一覧`,school.groups[this.value].students,["name","age","sex","height","weight","bmi"],"age",0
+			)
 		}
 	}
 
@@ -215,8 +291,8 @@
 
 		var el = document.createElement("select");
 		el.setAttribute("id",selectId);
-		el.onchange =  changeSelect;
-		el.onsubmit =  changeSelect;
+//		el.onchange =  changeSelect;
+		el.onclick =  changeSelect;
 		var div = document.getElementById(selectId+"div");
 		var child = document.getElementById("lastBr");
 		div.appendChild(el);
@@ -231,12 +307,17 @@
 		}
 	
 	}
-	function addOption(selectId,text,value) {
-		let select = document.getElementById(selectId);
+	function addOption(target,text,value) {
+		let el
+		if (typeOf(target)=="string"){
+			el = document.getElementById(target);
+		}else{
+			el = target
+		}
 		let option = document.createElement("option");
 		option.text = text;
 		option.value = value;
-		select.appendChild(option);
+		el.appendChild(option);
 	}
 
 	function selectSelect(selectId,value) {
@@ -344,6 +425,8 @@
 			this.age = 15
 			this.week = 0
 			this.sex = sex
+			this.date = 0
+			this.grade = 0
 
 			this.birthWeek = randomRandInt(0,12*4-1)
 
@@ -388,7 +471,7 @@
 			this.addValueHeight = (this.targetHeight-this.height) / (( 3 * 12 * 4) - this.week)
 			this.addValueWeight = (this.targetWeight-this.weight) / (( 3 * 12 * 4) - this.week)
 
-
+			this.bmi = this.weight / ((this.height/100) ** 2)
 		}
 
 		nextWeek(){
@@ -405,6 +488,11 @@
 				this.addValueWeight = (this.targetWeight-this.weight) / (( 3 * 12 * 4) - this.week)
 			}
 			this.week += 1
+
+			this.bmi = this.weight / ((this.height/100) ** 2)
+//			if (this.week%(4*12)==0){
+//				this.grade++
+//			}
 		}
 	}
 
@@ -447,7 +535,7 @@
 		let yearStartFlag=false
 
 		let bestGain = {"grade":0,"name":"","height":0,"lastWeight":0,"weight":0,"gainWeight":0}
-
+		let studentsManth = []
 
 //		if (manth%==0){
 //			manthStartFlag=true
@@ -458,15 +546,15 @@
 
 
 		if (yearStartFlag){
-			yearStartFlag=false
 			school.makeGroup(studentNum,sexs)
 
 			for ( const [gNum,g] of enumerate(school.groups)){
 				removeSelect("year"+g.year)
 				createSelect("year"+g.year)
 				removeAllOption("year"+g.year)
-				addOption("year"+g.year,str(g.year+1)+"年生",0)
+				addOption("year"+g.year,str(g.year+1)+"年生",gNum)
 				for ( const s of g.students){
+					s.grade=gNum
 					let sexStr=""
 					if (s.sex=="male"){
 						sexStr = "くん"
@@ -481,6 +569,7 @@
 		for ( const [gNum,g] of enumerate(school.groups)){
 			selectSelect("year"+g.year,0)
 			for ( const s of g.students){
+				studentsManth.push(s)
 				if (!students[s.name+s.id]){
 					students[s.name+s.id] = []
 				}else{
@@ -497,7 +586,9 @@
 						}
 					}
 				}
-				students[s.name+s.id].push({"height":s.height,"weight":s.weight,"name":s.name,"date":year*12+manth,"age":s.age})
+//				students[s.name+s.id].push({"height":s.height,"weight":s.weight,"name":s.name,"date":year*12+manth,"age":s.age})
+				s.date = year*12+manth
+				students[s.name+s.id].push(JSON.parse(JSON.stringify(s)))
 			}
 		}
 		if (bestGain["gainWeight"]!=0){
@@ -507,7 +598,7 @@
 			}else{
 				sexStr="さん"
 			}
-			dictToTable(`今月一番体重が増えたのは${bestGain.grade+1}年生の${bestGain.name}${sexStr}です`,bestGain,["grade","name","height","lastWeight","weight","gainWeight"])
+//			lastTableArguments = dictToTable(`今月一番体重が増えたのは${bestGain.grade+1}年生の${bestGain.name}${sexStr}です`,bestGain,["grade","name","height","lastWeight","weight","gainWeight"],"",0)
 		}
 		for (const week of range(4)){
 			schoolAverageWeight = school.calcWeightAverage()
@@ -537,7 +628,10 @@
 			year++
 		}
 		updateTimeTxt(year,manth)
-
+		lastTableArguments = dictToTable(
+			"全生徒",studentsManth,["name","grade","age","sex","height","weight","bmi"],"",0
+		)
+		yearStartFlag=false
 	}
 
 
@@ -565,5 +659,9 @@
 
 	let language = getBrowserLang()
 
+	let lastTableArguments = []
+	let lastSortKey = ""
+
+	let sortOrder = 0
 }
 

@@ -6,6 +6,7 @@ div {
 table {
 	margin-left: auto;
 	margin-right: auto;
+	border-collapse: collapse;
 }
 
 @media screen and (min-width: 960px) {
@@ -13,6 +14,10 @@ table {
 }
 
 @media (prefers-color-scheme: dark) {
+
+	a:link { color: #009999; }
+	a:visited { color: #009999; }
+	a:active { color: #009999; }
 
 	body, input, select, textarea {
 		background-color: #222222;
